@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: '{{.Values.microservices.minionservice.serviceName}}'
+  labels:
+    app: '{{.Values.microservices.minionservice.serviceName}}'
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: '{{.Values.microservices.minionservice.serviceName}}'
+  template:
+    metadata:
+      labels:
+        app: '{{.Values.microservices.minionservice.serviceName}}'
+    spec:
+      containers:
+      - name: '{{.Values.microservices.minionservice.serviceName}}'
+        image: '{{.Values.microservices.minionservice.dockerImage}}'
+        ports:
+        - containerPort: 8080
+        env:
+        - name: '{{.Values.microservices.minionservice.envs.MYSQL_ROOT_PASSWORD.name}}'
+          valueFrom:
+            configMapKeyRef:
+              name: '{{.Values.microservices.minionservice.serviceName}}'
+              key: '{{.Values.microservices.minionservice.envs.MYSQL_ROOT_PASSWORD.name}}'
+        - name: '{{.Values.microservices.minionservice.envs.MYSQL_DATABASE.name}}'
+          valueFrom:
+            configMapKeyRef:
+              name: '{{.Values.microservices.minionservice.serviceName}}'
+              key: '{{.Values.microservices.minionservice.envs.MYSQL_DATABASE.name}}'
+        - name: '{{.Values.microservices.minionservice.envs.DB_HOST.name}}'
+          valueFrom:
+            configMapKeyRef:
+              name: '{{.Values.microservices.minionservice.serviceName}}'
+              key: '{{.Values.microservices.minionservice.envs.DB_HOST.name}}'
+        - name: '{{.Values.microservices.minionservice.envs.DB_USERNAME.name}}'
+          valueFrom:
+            configMapKeyRef:
+              name: '{{.Values.microservices.minionservice.serviceName}}'
+              key: '{{.Values.microservices.minionservice.envs.DB_USERNAME.name}}'
+        - name: '{{.Values.microservices.minionservice.envs.DB_PASSWORD.name}}'
+          valueFrom:
+            configMapKeyRef:
+              name: '{{.Values.microservices.minionservice.serviceName}}'
+              key: '{{.Values.microservices.minionservice.envs.DB_PASSWORD.name}}'
+        resources:
+          requests:
+            cpu: 100m
+            memory: 500Mi
+          limits:
+            cpu: '{{.Values.microservices.minionservice.maxCPU}}'
+            memory: '{{.Values.microservices.minionservice.maxMemory}}'
